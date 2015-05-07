@@ -28,7 +28,7 @@ function epl_shortcode_listing_search_callback( $atts ) {
 		'title'				=>	'', 	// Freeform text
 		'post_type'			=>	array('property'), // Post type name array
 		'property_status'		=>	'', 	// Singular: current / sold / leased or '' for any
-		'style'				=>	'', 	// Singular: blank value or "wide" or "slim"
+		'style'				=>	'default', 	// Singular: "default", "wide" or "slim"
 		'search_house_category'		=>	'on', 	// on or off
 		'search_price'			=>	'on', 	// on or off
 		'search_bed'			=>	'on', 	// on or off
@@ -42,46 +42,58 @@ function epl_shortcode_listing_search_callback( $atts ) {
 		'submit_label'			=>	__('Find me a Property!','epl')
 	), $atts);
 	extract($atts);
+	$selected_post_types = $atts['post_type'];
 	extract( $_GET );
-	if(!is_array($post_type)){
-		$post_type = explode(",", $post_type);
-		$post_type = array_map('trim', $post_type);
-	}
-	$post_types = $post_type;
+	$queried_post_type = isset($_GET['post_type']) ? $_GET['post_type'] : '';
 	
-	// Search Widget Class
-	if ( isset( $style ) ) {
-		if ( $style == 'wide' )
-			$search_class = 'epl-search-wide';
-			
-		elseif ( $style == 'slim' )
-			$search_class = 'epl-search-slim';
-			
-		else $search_class = '';
+	if(!is_array($selected_post_types)){
+		$selected_post_types = explode(",", $selected_post_types);
+		$selected_post_types = array_map('trim', $selected_post_types);
 	}
 	
 	global $epl_settings;
 	ob_start();	
 	$tabcounter = 1;
-	if(!empty($post_types)):
-		if(count($post_types) > 1):
-			echo "<ul class='epl-search-tabs property_search-tabs $search_class'>";
-			foreach($post_types as $post_type):
+	if(!empty($selected_post_types)):
+		if(count($selected_post_types) > 1):
+			echo "<ul class='epl-search-tabs property_search-tabs epl-search-$style'>";
+			foreach($selected_post_types as $post_type):
 	
-				$is_sb_current = $tabcounter == 1 ? 'epl-sb-current' : '';
+				if( isset($_GET['action'] ) && $_GET['action'] == 'epl_search' ) {
+			 
+					if( $queried_post_type ==  $post_type ) {
+						$is_sb_current = 'epl-sb-current';
+					} else {
+						$is_sb_current = '';
+					}	
+				} else {
+					$is_sb_current = $tabcounter == 1 ? 'epl-sb-current' : '';
+				}
 				$post_type_label = isset($epl_settings['widget_label_'.$post_type])?$epl_settings['widget_label_'.$post_type]:$post_type;
 				echo '<li data-tab="epl_ps_tab_'.$tabcounter.'" class="tab-link '.$is_sb_current.'">'.$post_type_label.'</li>';
 				$tabcounter++;
+				
 			endforeach;
 			echo '</ul>';
 		endif;
 
 	?>
-	<div class="epl-search-forms-wrapper <?php echo $search_class; ?>">
+	<div class="epl-search-forms-wrapper epl-search-<?php echo $style; ?>">
 		<?php
 			$tabcounter = 1; // reset tab counter
-			foreach($post_types as $post_type):
-			$is_sb_current = $tabcounter == 1 ? 'epl-sb-current' : '';
+
+			foreach($selected_post_types as $post_type):
+			
+			if( isset($_GET['action'] ) && $_GET['action'] == 'epl_search' ) {
+			 
+				if( $queried_post_type ==  $post_type ) {
+					$is_sb_current = 'epl-sb-current';
+				} else {
+					$is_sb_current = '';
+				}	
+			} else {
+				$is_sb_current = $tabcounter == 1 ? 'epl-sb-current' : '';
+			}
 		?>
 		</ul>
 		<div class="epl-search-form <?php echo $is_sb_current; ?>" id="epl_ps_tab_<?php echo $tabcounter; ?>">
