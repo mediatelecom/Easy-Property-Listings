@@ -5,11 +5,15 @@
 	 *	@since 2.2
 	 */
 	function is_epl_post() {
-		
-		$epl_posts  = epl_get_active_post_types();
-		$epl_posts	= array_keys($epl_posts);
-		$epl_posts 	= apply_filters('epl_additional_post_types',$epl_posts);
-		return 		in_array( get_post_type(), $epl_posts);
+		return 		in_array(get_post_type(),epl_all_post_types());
+	}
+	
+	/**
+	 *	check if viewing a single post of epl
+	 *	@since 2.2
+	 */
+	function is_epl_single() {
+		return 		is_singular(epl_all_post_types());
 	}
 	
 	/**
@@ -18,12 +22,7 @@
 	 */
 	function is_epl_post_type($type) {
 		
-		if( is_array($type) ) {
-		
-			return in_array( get_post_type(), $type );
-		}
-		
-		return get_post_type() == $type;
+		return in_array( $type,epl_all_post_types() );
 
 	}
 	
