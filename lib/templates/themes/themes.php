@@ -21,7 +21,7 @@ function epl_load_core_templates($template) {
 	
 	
 	$post_tpl	=	'';
-	if ( is_epl_post() ) {
+	if ( is_epl_post_single() ) {
 
 		$common_tpl		= apply_filters('epl_common_single_template','single-listing.php');
 		$post_tpl 		= 'single-'.get_post_type().'.php';
@@ -37,7 +37,6 @@ function epl_load_core_templates($template) {
 		$find[] 		= epl_template_path() . $post_tpl;
 		$find[] 		=  $common_tpl;
 		$find[] 		= epl_template_path() . $common_tpl;
-		
 	} elseif ( is_tax ( 'location' ) ) {
 
 		$term   		= get_queried_object();

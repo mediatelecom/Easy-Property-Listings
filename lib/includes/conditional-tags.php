@@ -12,7 +12,7 @@
 	 *	check if viewing a single post of epl
 	 *	@since 2.2
 	 */
-	function is_epl_single() {
+	function is_epl_post_single() {
 		return 		is_singular(epl_all_post_types());
 	}
 	
